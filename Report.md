@@ -3,10 +3,10 @@
 ## 0. Group number: 
 
 ## 1. Group members:
-1. First
-2. Second
-3. Third
-4. Fourth
+1. Tran Lam
+2. Andrew Oh
+3. Jerry Tran
+4. Nick Janocik
 
 ## 2. Project topic (e.g., parallel sorting algorithms)
 
