@@ -9,7 +9,7 @@
 4. Nick Janocik
 
 ## 2. Project topic 
-### Parallel Sorts
+## _Parallel Sorts_
 
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
