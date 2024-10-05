@@ -204,6 +204,10 @@ END FUNCTION
 
 
 ### 2c. Evaluation plan - what and how will you measure and compare
-- Input sizes, Input types
-- Strong scaling (same problem size, increase number of processors/nodes)
-- Weak scaling (increase problem size, increase number of processors)
+We plan to evaluate the sorting algorithms by changing the input sizes of the arrays and comparing the performance between each instance. We will also test different input types such as random arrays, sorted arrays, and reversed arrays.
+
+To evaluate strong scaling, we will be testing the same sizes and types of arrays but increasing the number of processors or nodes and comparing execution time and efficiency.
+
+For weak scaling, we will be increasing both the problem size and number of processors proportionally and measuring the execution time and efficiency.
+
+Lastly, we will compare the overall performance across the different sorting algorithms (Bitonic, Sample, Merge, and Radix Sort) based on scalability, execution time, and resource utilization. We will be using Grace to measure each and compare the computations.
