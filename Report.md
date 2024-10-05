@@ -17,7 +17,7 @@ We will be using Discord to communicate with one another.
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 
-- Bitonic Sort:
+- Bitonic Sort: This sorting algorithm sorts an array of elemenets by creating a bitonic sequence then sort the sequence. A bitonic sequence is a sequence that is formed by two halves, one monotonically increases and one monotonically decreases. Then the sequence use a network of comparators called Bitonic merge network and swaps elements to ensure correct order. We will be using Grace to measure performance metric such as execution time and resources utiliztion across different sizes of array and number of processors.
 - Sample Sort:
 - Merge Sort: This sorting algorithm follows the "divide-and-conquer" approach when sorting an array of elements. The array is split up into smaller sub-arrays, those sub-arrays are then sorted, and finally, the subarrays are merged together to complete the sort. We will be implementing a parallel version of the merge sort using MPI which will help distribute the computation across multiple processors. Then, we will compare the performeance in terms of execution time and resource utilization across different parallelization configurations.
 - Radix Sort: This is a non-comparative sorting algorithm that sorts integers/strings by processing individual digits/characters. It will be implemented in a parallel manner and will be tested on multi-core processors. Grace is what we are going to use which allows us to measure performance metric such as execution time and resource utilization across different configurations.
@@ -25,7 +25,40 @@ We will be using Discord to communicate with one another.
 ### 2b. Pseudocode for each parallel algorithm
 - For MPI programs, include MPI calls you will use to coordinate between processes
 - Bitonic Sort:
+````
+BitonicSort(array A, low l, count cnt, direction d, rank r, size s)
+    if count > 1
+        k = count / 2
+        BitonicSort(A, l, k, 1, r, s)
+        BitonicSort(A, l + k, k, 0, r, s)
+        BitonicMerge(A, l, cnt, d, r, s)
 
+BitonicMerge(array A, low l, count cnt, direction d, rank r, size s)
+    if count > 1
+        k = count / 2
+        for i = low to low + k - 1
+            if (d == 1 and A[i] > A[i + k] or d == 0 and A[i] < A[i + k])
+                swap(A[i], A[i + k])
+        partner = rank ^ k
+        if partner < size
+            MPI_Send(A, cnt, MPI_INT, partner, 0, MPI_COMM_WORLD)
+            MPI_Recv(A, cnt, MPI_INT, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE)
+        BitonicMerge(A, l, k, d, r, s)
+        BitonicMerge(A, l + k, k, d, r, s)
+
+Init_Main(argc, argv[])
+    array_size = atoi(argv[1])
+    num_procs = atoi(argv[2])
+
+    MPI_Init(&argc, &argv)
+    rank = MPI_Comm_rank(MPI_COMM_WORLD)
+    size = MPI_Comm_rank(MPI_COMM_WORLD)
+    arr = allocate_array_part(rank, size, array_size)
+
+    BitonicSort(arr, 0, array_size, 1, rank, size)
+
+    MPI_Finalize()    
+````
 - Sample Sort:
 
 - Merge Sort:
