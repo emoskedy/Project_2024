@@ -60,7 +60,67 @@ Init_Main(argc, argv[])
     MPI_Finalize()    
 ````
 - Sample Sort:
+````
+SampleSort(argc, argv)
+    MPI_Init(&argc, &argv)
+    rank = MPI_Comm_rank(MPI_COMM_WORLD)
+    num_procs = MPI_Comm_size(MPI_COMM_WORLD)
 
+    if rank == 0
+        array A = generateArray(argv[1]) 
+        n = length(arr)
+    else
+        array A = NULL
+
+    local_arr = distributeArray(A, n, num_procs, r)
+    local_sample = selectSample(local_arr, num_procs)
+    all_samples = MPI_Gather(local_sample, num_procs - 1, MPI_INT, root=0)
+
+    if rank == 0
+        all_samples_sorted = sort(all_samples)
+        split = selectGlobalSplitters(all_samples_sorted, num_procs)
+    
+    MPI_Bcast(split, num_procs - 1, MPI_INT, root=0)
+    partitions = partition(local_arr, split, num_procs)
+    all_partitions = MPI_Alltoall(partitions, num_procs)
+    local_sorted_arr = mergePartitions(all_partitions)
+    sorted_arr = MPI_Gather(local_sorted_arr, local_size, MPI_INT, root=0)
+
+    MPI_Finalize()
+
+    return sorted_arr
+
+distributeArray(array A, n, num_procs, rank r)
+    local_size = n / num_procs
+    local_arr = MPI_Scatter(A, local_size, MPI_INT, root=0)
+
+    return local_arr
+
+selectSample(local_arr LA, num_procs)
+    sample_size = num_procs - 1
+    sample = randomSample(LA, sample_size)
+    sample_sorted = sort(sample)
+
+    return sample_sorted
+
+partition(local_arr LA, split, num_procs)
+    partitions = createEmptyPartitions(num_procs)
+    for each element in LA
+        find correct partition based on splitters
+        add element to corresponding partition
+    
+    return partitions
+
+mergePartitions(partitions)
+    merged_arr = []
+    merged_arr = kWayMerge(partitions)
+    
+    return merged_arr
+
+kWayMerge(partitions)
+    Merges all partitions into a single sorted array
+    return merged_array       
+````
 - Merge Sort:
 ````
 def ParallelMergeSort(array A, integer n):
