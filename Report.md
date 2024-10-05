@@ -17,7 +17,7 @@ We will be using Discord to communicate with one another.
 
 ### 2a. Brief project description (what algorithms will you be comparing and on what architectures)
 - Bitonic Sort: This sorting algorithm sorts an array of elements by creating a bitonic sequence then sort the sequence. A bitonic sequence is a sequence that is formed by two halves, one monotonically increases and one monotonically decreases. Then the sequence use a network of comparators called Bitonic merge network and swaps elements to ensure correct order. We will be using Grace to measure performance metric such as execution time and resource utiliztion across different sizes of arrays and the number of processors.
-- Sample Sort: This is a "divide-and-conquer" sorting algorithm that divides data across different processors. This divided data is then sorted individually using quicksort. From there, the data is distributed into buckets where each bucket corresponds to a defined range to ensure each processor is given similar workloads. Next, the buckets sort their given data, and the data is then merged together in order of each bucket due to the non-overlapping range for each bucket.
+- Sample Sort: The input array is divided among multiple processes, each of which sorts its local chunk independently. The sorted chunks are then iteratively merged in parallel, reducing the number of processes involved at each step. The merging continues until only the root process has the final sorted array, which is gathered from all processes.
 - Merge Sort: This sorting algorithm follows the "divide-and-conquer" approach when sorting an array of elements. The array is split up into smaller sub-arrays, those sub-arrays are then sorted, and finally, the subarrays are merged together to complete the sort. We will be implementing a parallel version of the merge sort using MPI which will help distribute the computation across multiple processors. Then, we will compare the performance in terms of execution time and resource utilization across different parallelization configurations.
 - Radix Sort: This is a non-comparative sorting algorithm that sorts integers/strings by processing individual digits/characters. It will be implemented in a parallel manner and will be tested on multi-core processors. Grace is what we are going to use which allows us to measure performance metric such as execution time and resource utilization across different configurations.
 
@@ -60,65 +60,61 @@ Init_Main(argc, argv[])
 ````
 - Sample Sort:
 ````
-SampleSort(argc, argv)
-    MPI_Init(&argc, &argv)
+def ParallelMergeSort(array A, integer n):
+    MPI_Init()
     rank = MPI_Comm_rank(MPI_COMM_WORLD)
     num_procs = MPI_Comm_size(MPI_COMM_WORLD)
 
-    if rank == 0
-        array A = generateArray(argv[1]) 
-        n = length(arr)
-    else
-        array A = NULL
+    local_n = n / num_procs
+    array local_A[local_n]
+    MPI_Scatter(A, local_n, MPI_INT, local_A, local_n, MPI_INT, 0, MPI_COMM_WORLD)
 
-    local_arr = distributeArray(A, n, num_procs, r)
-    local_sample = selectSample(local_arr, num_procs)
-    all_samples = MPI_Gather(local_sample, num_procs - 1, MPI_INT, root=0)
+    MergeSort(local_A, 0, local_n - 1)
 
-    if rank == 0
-        all_samples_sorted = sort(all_samples)
-        split = selectGlobalSplitters(all_samples_sorted, num_procs)
-    
-    MPI_Bcast(split, num_procs - 1, MPI_INT, root=0)
-    partitions = partition(local_arr, split, num_procs)
-    all_partitions = MPI_Alltoall(partitions, num_procs)
-    local_sorted_arr = mergePartitions(all_partitions)
-    sorted_arr = MPI_Gather(local_sorted_arr, local_size, MPI_INT, root=0)
+    size = 1
+    while size < num_procs:
+        if (rank MOD (2 * size)) == 0:
+            if rank + size < num_procs:
+                recv_array = new array of size(local_n)
+                MPI_Recv(recv_array, local_n, MPI_INT, rank + size, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE)
+                local_A = Merge(local_A, recv_array)
+        else:
+            partner = rank - size
+            MPI_Send(local_A, local_n, MPI_INT, partner, 0, MPI_COMM_WORLD)
+            BREAK
+        size = size * 2
+
+    if rank == 0:
+        MPI_Gather(local_A, local_n, MPI_INT, A, local_n, MPI_INT, 0, MPI_COMM_WORLD)
 
     MPI_Finalize()
 
-    return sorted_arr
+def Merge(array left, array right):
+    int left_len = length(left)
+    int right_len = length(right)
+    array result[left_len + right_len]
+    int i, j, k = 0
 
-distributeArray(array A, n, num_procs, rank r)
-    local_size = n / num_procs
-    local_arr = MPI_Scatter(A, local_size, MPI_INT, root=0)
+    while i < left_len AND j < right_len:
+        if left[i] <= right[j]:
+            result[k] = left[i]
+            i = i + 1
+        else:
+            result[k] = right[j]
+            j = j + 1
+        k = k + 1
 
-    return local_arr
+    while i < left_len:
+        result[k] = left[i]
+        i = i + 1
+        k = k + 1
 
-selectSample(local_arr LA, num_procs)
-    sample_size = num_procs - 1
-    sample = randomSample(LA, sample_size)
-    sample_sorted = sort(sample)
+    while j < right_len:
+        result[k] = right[j]
+        j = j + 1
+        k = k + 1
 
-    return sample_sorted
-
-partition(local_arr LA, split, num_procs)
-    partitions = createEmptyPartitions(num_procs)
-    for each element in LA
-        find correct partition based on splitters
-        add element to corresponding partition
-    
-    return partitions
-
-mergePartitions(partitions)
-    merged_arr = []
-    merged_arr = kWayMerge(partitions)
-    
-    return merged_arr
-
-kWayMerge(partitions)
-    Merges all partitions into a single sorted array
-    return merged_array       
+    return result     
 ````
 - Merge Sort:
 ````
