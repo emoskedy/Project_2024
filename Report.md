@@ -60,61 +60,61 @@ Init_Main(argc, argv[])
 ````
 - Sample Sort:
 ````
-def ParallelMergeSort(array A, integer n):
-    MPI_Init()
+SampleSort(argc, argv)
+    MPI_Init(&argc, &argv)
     rank = MPI_Comm_rank(MPI_COMM_WORLD)
     num_procs = MPI_Comm_size(MPI_COMM_WORLD)
 
-    local_n = n / num_procs
-    array local_A[local_n]
-    MPI_Scatter(A, local_n, MPI_INT, local_A, local_n, MPI_INT, 0, MPI_COMM_WORLD)
+    if rank == 0
+        array A = generateArray(argv[1]) 
+        n = length(arr)
+    else
+        array A = NULL
 
-    MergeSort(local_A, 0, local_n - 1)
+    local_arr = distributeArray(A, n, num_procs, r)
+    local_sample = selectSample(local_arr, num_procs)
+    all_samples = MPI_Gather(local_sample, num_procs - 1, MPI_INT, root=0)
+    if rank == 0
+        all_samples_sorted = sort(all_samples)
+        split = selectGlobalSplitters(all_samples_sorted, num_procs)
 
-    size = 1
-    while size < num_procs:
-        if (rank MOD (2 * size)) == 0:
-            if rank + size < num_procs:
-                recv_array = new array of size(local_n)
-                MPI_Recv(recv_array, local_n, MPI_INT, rank + size, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE)
-                local_A = Merge(local_A, recv_array)
-        else:
-            partner = rank - size
-            MPI_Send(local_A, local_n, MPI_INT, partner, 0, MPI_COMM_WORLD)
-            BREAK
-        size = size * 2
-
-    if rank == 0:
-        MPI_Gather(local_A, local_n, MPI_INT, A, local_n, MPI_INT, 0, MPI_COMM_WORLD)
+    MPI_Bcast(split, num_procs - 1, MPI_INT, root=0)
+    partitions = partition(local_arr, split, num_procs)
+    all_partitions = MPI_Alltoall(partitions, num_procs)
+    local_sorted_arr = mergePartitions(all_partitions)
+    sorted_arr = MPI_Gather(local_sorted_arr, local_size, MPI_INT, root=0)
 
     MPI_Finalize()
+    return sorted_arr
 
-def Merge(array left, array right):
-    int left_len = length(left)
-    int right_len = length(right)
-    array result[left_len + right_len]
-    int i, j, k = 0
+distributeArray(array A, n, num_procs, rank r)
+    local_size = n / num_procs
+    local_arr = MPI_Scatter(A, local_size, MPI_INT, root=0)
+    return local_arr
 
-    while i < left_len AND j < right_len:
-        if left[i] <= right[j]:
-            result[k] = left[i]
-            i = i + 1
-        else:
-            result[k] = right[j]
-            j = j + 1
-        k = k + 1
+selectSample(local_arr LA, num_procs)
+    sample_size = num_procs - 1
+    sample = randomSample(LA, sample_size)
+    sample_sorted = sort(sample)
+    return sample_sorted
 
-    while i < left_len:
-        result[k] = left[i]
-        i = i + 1
-        k = k + 1
+partition(local_arr LA, split, num_procs)
+    partitions = createEmptyPartitions(num_procs)
+    for each element in LA
+        find correct partition based on splitters
+        add element to corresponding partition
 
-    while j < right_len:
-        result[k] = right[j]
-        j = j + 1
-        k = k + 1
+    return partitions
 
-    return result     
+mergePartitions(partitions)
+    merged_arr = []
+    merged_arr = kWayMerge(partitions)
+
+    return merged_arr
+
+kWayMerge(partitions)
+    Merges all partitions into a single sorted array
+    return merged_array
 ````
 - Merge Sort:
 ````
