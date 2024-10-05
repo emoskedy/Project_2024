@@ -130,14 +130,26 @@ def MergeSort(array A, integer left, integer right):
 
 - Radix Sort:
 ````
-FUNCTION RadixSort(array A, integer n)
-    // Step 1: Find the maximum number to determine the number of digits
-    max = FindMax(A, n)
+FUNCTION ParallelRadixSort(array A, integer n, integer rank, integer size)
+    // Step 1: Find the maximum number in the entire array
+    max = MPI_Reduce(FindMax(A), MPI_MAX, root=0)
 
-    // Step 2: Do counting sort for every digit
-    FOR digit = 1 TO max_digits(max) DO
-        CountingSortByDigit(A, n, digit)
-    END FOR
+    // Step 2: Split the data among processes
+    local_n = n / size
+    array local_A[local_n]
+    MPI_Scatter(A, local_A, local_n, root=0)
+
+    // Step 3: Perform local Radix Sort
+    RadixSort(local_A, local_n)
+
+    // Step 4: Gather sorted subarrays
+    array sorted_A[n]
+    MPI_Gather(local_A, sorted_A, local_n, root=0)
+
+    IF rank == 0 THEN
+        // Step 5: Final Merge (if needed)
+        FinalMerge(sorted_A)
+    END IF
 END FUNCTION
 
 FUNCTION FindMax(array A, integer n)
@@ -150,30 +162,40 @@ FUNCTION FindMax(array A, integer n)
     RETURN max
 END FUNCTION
 
+FUNCTION RadixSort(array A, integer n)
+    // Find the maximum number to determine the number of digits
+    max = FindMax(A, n)
+
+    // Do counting sort for every digit
+    FOR digit = 1 TO max_digits(max) DO
+        CountingSortByDigit(A, n, digit)
+    END FOR
+END FUNCTION
+
 FUNCTION CountingSortByDigit(array A, integer n, integer digit)
-    // Step 3: Create output array and count array
+    // Step 1: Create output array and count array
     array output[n]
     array count[10] INITIALIZED TO 0
 
-    // Step 4: Count occurrences of each digit
+    // Step 2: Count occurrences of each digit
     FOR i = 0 TO n - 1 DO
         index = (A[i] / digit) MOD 10
         count[index] = count[index] + 1
     END FOR
 
-    // Step 5: Change count[i] so that it contains the actual position of this digit in output[]
+    // Step 3: Change count[i] so that it contains the actual position of this digit in output[]
     FOR i = 1 TO 9 DO
         count[i] = count[i] + count[i - 1]
     END FOR
 
-    // Step 6: Build the output array
+    // Step 4: Build the output array
     FOR i = n - 1 DOWN TO 0 DO
         index = (A[i] / digit) MOD 10
         output[count[index] - 1] = A[i]
         count[index] = count[index] - 1
     END FOR
 
-    // Step 7: Copy the output array to A[]
+    // Step 5: Copy the output array to A[]
     FOR i = 0 TO n - 1 DO
         A[i] = output[i]
     END FOR
