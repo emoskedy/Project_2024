@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <caliper/cali.h> 
+#include <caliper/cali-manager.h>
 #include <adiak.hpp>
 
 #define RANDOM 0
@@ -123,6 +124,7 @@ int main(int argc, char *argv[])
 
     int taskid;
     int numTasks;
+    int destPos = 0;
 
     MPI_Status status;
 
@@ -280,7 +282,7 @@ int main(int argc, char *argv[])
             if (rank == 0) {
                 printf("Finished Arrays\n");
             }
-            printArray(arr, sizeOfArray, taskid);
+            PrintArray(arr, sizeOfArray, taskid);
             fflush(stdout);
         }
         rank++;
