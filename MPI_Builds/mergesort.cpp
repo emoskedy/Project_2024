@@ -180,7 +180,7 @@ int main(int argc, char** argv) {
     adiak::value("input_type", "Random");
     adiak::value("num_procs", num_procs);
     adiak::value("scalability", "strong");
-    adiak::value("group_num", 17);
+    adiak::value("group_num", 19);
     adiak::value("implementation_source", "handwritten");
 
     std::vector<int> data(array_size);
