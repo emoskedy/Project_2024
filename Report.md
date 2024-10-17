@@ -5,10 +5,10 @@
 ## 1. Project details:
 
 ### 1a. Group members:
-1. Tran Lam
-2. Andrew Oh
-3. Jerry Tran
-4. Nick Janocik
+1. Tran Lam - Bitonic Sort
+2. Andrew Oh - Merge Sort
+3. Jerry Tran - Radix Sort
+4. Nick Janocik - Sample Sort
 
 ### 1b. Communication method:
 We will be using Discord to communicate with one another.
@@ -336,6 +336,35 @@ CALI_MARK_END("comp");
 └─ 0.440 correctness_check
 ```
 
+### Calltree
+- Bitonic Sort
+```
+3.883 main
+├─ 3.843 main
+│  ├─ 0.000 MPI_Init
+│  ├─ 0.051 data_init_runtime
+│  ├─ 0.192 comm
+│  │  ├─ 0.146 comm_large
+│  │  │  ├─ 0.041 MPI_Scatter
+│  │  │  └─ 0.000 MPI_Gather
+│  │  └─ 0.046 comp_large
+│  │     └─ 0.046 MPI_Sendrecv
+│  ├─ 0.029 comp
+│  │  ├─ 0.005 comp_small
+│  │  └─ 0.024 comm_large
+│  └─ 0.005 correctness_check
+├─ 0.000 MPI_Finalize
+├─ 0.000 MPI_Initialized
+├─ 0.000 MPI_Finalized
+└─ 0.040 MPI_Comm_dup
+```
+
+- Merge Sort
+
+- Radix Sort
+
+- Sample Sort
+  
 ### 3b. Collect Metadata
 
 Have the following code in your programs to collect metadata:
@@ -360,6 +389,30 @@ adiak::value("implementation_source", implementation_source); // Where you got t
 They will show up in the `Thicket.metadata` if the caliper file is read into Thicket.
 
 ### **See the `Builds/` directory to find the correct Caliper configurations to get the performance metrics.** They will show up in the `Thicket.dataframe` when the Caliper file is read into Thicket.
+
+### Adiak Metadata 
+- Bitonic Sort
+```
+launchdate: 1729137840,
+libraries: [/scratch/group/csce435-f24/Caliper/caliper/lib],
+cmdline: [./BitonicSort, 1048576, 8, random],
+algorithm: bitonic,
+programming_model: mpi, 
+data_type: int, 
+size_of_data_type: 4, 
+input_size: 1048576, 
+input_type: random,
+num_procs: 8,
+scalability: strong,
+group_num: 19,
+implementation_source: handwritten
+```
+- Merge Sort
+  
+- Radix Sort
+  
+- Sample Sort
+  
 ## 4. Performance evaluation
 
 Include detailed analysis of computation performance, communication performance. 
