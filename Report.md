@@ -398,7 +398,20 @@ CALI_MARK_END("comp");
 
 ```
 - Radix Sort
-
+```
+6.547 main
+├─ 0.000 MPI_Init
+├─ 0.024 data_init_runtime
+├─ 3.023 MPI_Barrier
+└─ 0.005 correctness_check
+   ├─ 0.000 MPI_Send
+   └─ 0.004 MPI_Recv
+3.057 MPI_Barrier
+0.000 MPI_Finalize
+0.000 MPI_Initialized
+0.000 MPI_Finalized
+0.000 MPI_Comm_dup
+```
 - Sample Sort
   
 ### 3b. Collect Metadata
