@@ -360,7 +360,43 @@ CALI_MARK_END("comp");
 ```
 
 - Merge Sort
+```
+5.305 main
+├─ 0.000 MPI_Init
+├─ 0.002 MPI_Bcast
+├─ 0.007 initializeData
+│  └─ 0.007 data_init_runtime
+├─ 0.005 MPI_Barrier
+├─ 4.848 executeParallelMergeSort
+│  ├─ 0.019 comm
+│  │  └─ 0.019 comm_large
+│  │     ├─ 0.000 MPI_Scatter
+│  │     ├─ 0.038 MPI_Recv
+│  │     └─ 0.000 MPI_Send
+│  ├─ 4.823 recursiveMergeSort
+│  │  └─ 4.822 comp
+│  │     ├─ 4.820 comp_small
+│  │     │  └─ 4.820 recursiveMergeSort
+│  │     │     └─ 4.820 comp
+│  │     └─ 0.002 comp_large
+│  │        └─ 0.002 mergeArrays
+│  ├─ 0.009 comp
+│  │  └─ 0.009 comp_large
+│  │     └─ 0.007 mergeArrays
+│  └─ 0.000 MPI_Gather
+├─ 0.027 MPI_Comm_dup
+├─ 0.000 MPI_Send
+├─ 0.000 MPI_Comm_free
+├─ 0.000 MPI_Finalize
+├─ 0.000 MPI_Initialized
+├─ 0.004 validateSorted
+│  └─ 0.004 correctness_check
+├─ 0.001 MPI_Recv
+├─ 0.000 MPI_Finalized
+├─ 0.000 MPI_Probe
+└─ 0.000 MPI_Get_count
 
+```
 - Radix Sort
 
 - Sample Sort
@@ -408,7 +444,21 @@ group_num: 19,
 implementation_source: handwritten
 ```
 - Merge Sort
-  
+```
+launchdate: 1729138677,
+libraries: [/scratch/group/csce435-f24/Caliper/caliper/lib],
+cmdline: [./mergesort, 262144, 4, random],
+algorithm: parallel_merge_sort	,
+programming_model: MPI, 
+data_type: int, 
+size_of_data_type: 4, 
+input_size: 1048576, 
+input_type: random,
+num_procs: 4,
+scalability: strong,
+group_num: 19,
+implementation_source: handwritten
+```
 - Radix Sort
   
 - Sample Sort
