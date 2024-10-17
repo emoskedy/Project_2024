@@ -473,7 +473,21 @@ group_num: 19,
 implementation_source: handwritten
 ```
 - Radix Sort
-  
+```
+launchdate:  1729123360,
+libraries: [/scratch/group/csce435-f24/Caliper/caliper/lib],
+cmdline: [./mpi_mm, 1048576, 0],
+algorithm: radix,
+programming_model: MPI, 
+data_type: int, 
+size_of_data_type: 4, 
+input_size: 1048576, 
+input_type: 0,
+num_procs: 4,
+scalability: strong,
+group_num: 19,
+implementation_source: ai
+```  
 - Sample Sort
   
 ## 4. Performance evaluation
