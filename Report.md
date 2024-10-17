@@ -413,7 +413,30 @@ CALI_MARK_END("comp");
 0.000 MPI_Comm_dup
 ```
 - Sample Sort
-  
+```
+0.888 main
+├─ 0.881 main
+│  ├─ 0.000 MPI_Init
+│  ├─ 0.000 data_init_runtime
+│  ├─ 0.002 MPI_Scatter
+│  ├─ 0.006 comm_large
+│  │  ├─ 0.000 MPI_Scatter
+│  │  ├─ 0.000 comp_large_middle
+│  │  ├─ 0.005 MPI_Gather
+│  │  ├─ 0.000 MPI_Bcast
+│  │  └─ 0.000 MPI_Recv
+│  ├─ 0.000 comp_large_middle
+│  ├─ 0.001 MPI_Gather
+│  ├─ 0.004 MPI_Bcast
+│  ├─ 0.000 MPI_Send
+│  ├─ 0.002 comp_large_final
+│  └─ 0.000 correctness_check
+├─ 0.000 MPI_Finalize
+├─ 0.000 MPI_Initialized
+├─ 0.000 MPI_Finalized
+└─ 0.002 MPI_Comm_dup
+```
+
 ### 3b. Collect Metadata
 
 Have the following code in your programs to collect metadata:
