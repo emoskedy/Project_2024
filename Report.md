@@ -512,6 +512,19 @@ group_num: 19,
 implementation_source: ai
 ```  
 - Sample Sort
+```
+launchdate:  1729124489,
+libraries: [/scratch/group/csce435-f24/Caliper/caliper/lib],
+cmdline: [./mpi_mm, 8192, 16],
+algorithm: samplesort,
+programming_model: mpi, 
+data_type: int, 
+size_of_data_type: 4, 
+num_procs: 4,
+scalability: strong,
+group_num: 19,
+implementation_source: handwritten, with ai for consullt
+```  
   
 ## 4. Performance evaluation
 
