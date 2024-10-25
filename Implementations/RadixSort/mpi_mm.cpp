@@ -23,9 +23,9 @@ const char* comp = "comp";
 const char* comp_small = "comp_small";
 const char* comp_large = "comp_large";
 
-std::vector<size_t> GenerateArray(size_t size, size_t inputType, size_t processorNumber) {
-    std::vector<size_t> arr(size);
-    srand(static_cast<unsigned size_t>(rand()) + processorNumber * 100);
+std::vector<int> GenerateArray(size_t size, int inputType, int processorNumber) {
+    std::vector<int> arr(size);
+    srand(static_cast<unsigned int>(rand()) + processorNumber * 100);
 
     switch (inputType) {
         case RANDOM:
@@ -56,7 +56,7 @@ std::vector<size_t> GenerateArray(size_t size, size_t inputType, size_t processo
     return arr;
 }
 
-void PrintArray(const std::vector<size_t>& arr, size_t processorNumber) {
+void PrintArray(const std::vector<int>& arr, int processorNumber) {
     printf("Processor %d, array: ", processorNumber);
     for (size_t i = 0; i < arr.size(); i++) {
         printf("%d ", arr[i]);
@@ -64,7 +64,7 @@ void PrintArray(const std::vector<size_t>& arr, size_t processorNumber) {
     printf("\n");
 }
 
-bool SortedVerification(const std::vector<size_t>& arr) {
+bool SortedVerification(const std::vector<int>& arr) {
     for (size_t i = 1; i < arr.size(); i++) {
         if (arr[i - 1] > arr[i]) {
             return false;
@@ -73,29 +73,29 @@ bool SortedVerification(const std::vector<size_t>& arr) {
     return true;
 }
 
-void ParallelRadixSort(std::vector<size_t>& arr, size_t rank, size_t numprocs) {
-    size_t global_max;
-    size_t local_max = *std::max_element(arr.begin(), arr.end());
+void ParallelRadixSort(std::vector<int>& arr, int rank, int numprocs) {
+    int global_max;
+    int local_max = *std::max_element(arr.begin(), arr.end());
     MPI_Allreduce(&local_max, &global_max, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
     
-    std::vector<size_t> temp(arr.size());
-    size_t bucket[10], offset[10];
+    std::vector<int> temp(arr.size());
+    int bucket[10], offset[10];
     
-    for (size_t exp = 1; global_max / exp > 0; exp *= 10) {
+    for (int exp = 1; global_max / exp > 0; exp *= 10) {
         std::fill_n(bucket, 10, 0);
 
         for (size_t i = 0; i < arr.size(); i++) {
-            size_t index = (arr[i] / exp) % 10;
+            int index = (arr[i] / exp) % 10;
             bucket[index]++;
         }
 
         offset[0] = 0;
-        for (size_t i = 1; i < 10; i++) {
+        for (int i = 1; i < 10; i++) {
             offset[i] = offset[i - 1] + bucket[i - 1];
         }
 
         for (size_t i = 0; i < arr.size(); i++) {
-            size_t index = (arr[i] / exp) % 10;
+            int index = (arr[i] / exp) % 10;
             temp[offset[index]++] = arr[i];
         }
 
@@ -103,9 +103,9 @@ void ParallelRadixSort(std::vector<size_t>& arr, size_t rank, size_t numprocs) {
     }
 }
 
-int main(size_t argc, char* argv[]) {
+int main(int argc, char* argv[]) {
     size_t sizeOfArray;
-    size_t inputType;
+    int inputType;
 
     if (argc == 3) {
         sizeOfArray = static_cast<size_t>(atoll(argv[1]));
@@ -116,7 +116,7 @@ int main(size_t argc, char* argv[]) {
     }
 
     MPI_Init(&argc, &argv);
-    size_t rank, numprocs;
+    int rank, numprocs;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     
@@ -126,13 +126,13 @@ int main(size_t argc, char* argv[]) {
     CALI_MARK_BEGIN("main"); //MAIN BEGIN=======================================================
     
     CALI_MARK_BEGIN("data_init_runtime"); //DATA INIT BEGIN=======================================================
-    std::vector<size_t> arr = GenerateArray(sizeOfArray, inputType, rank);
+    std::vector<int> arr = GenerateArray(sizeOfArray, inputType, rank);
 
 
     
     
     // Gather initial arrays at root
-    std::vector<size_t> all_arrays;
+    std::vector<int> all_arrays;
     if (rank == 0) {
         all_arrays.resize(sizeOfArray * numprocs);
     }
@@ -181,8 +181,8 @@ int main(size_t argc, char* argv[]) {
         // Check correctness of the whole sorted array
         CALI_MARK_BEGIN("correctness_check"); //CORRECTNESS BEGIN=======================================================
         bool isSortedCorrectly = true;
-        for (size_t i = 0; i < numprocs; i++) {
-            if (!SortedVerification(std::vector<size_t>(all_arrays.begin() + i * sizeOfArray, all_arrays.begin() + (i + 1) * sizeOfArray))) {
+        for (int i = 0; i < numprocs; i++) {
+            if (!SortedVerification(std::vector<int>(all_arrays.begin() + i * sizeOfArray, all_arrays.begin() + (i + 1) * sizeOfArray))) {
                 isSortedCorrectly = false;
                 printf("Array segment %d is not sorted correctly.\n", i);
             }
@@ -222,4 +222,4 @@ int main(size_t argc, char* argv[]) {
     MPI_Finalize();
     
     return 0;
-}
+} 
