@@ -35,17 +35,17 @@ std::vector<int> GenerateArray(size_t size, int inputType, int processorNumber) 
             break;
         case SORTED:
             for (size_t i = 0; i < size; i++) {
-                arr[i] = i + processorNumber * size;
+                arr[i] = (i + processorNumber * size) % 10000;
             }
             break;
         case REVERSE_SORTED:
             for (size_t i = size; i > 0; i--) {
-                arr[i-1] = (size - i) + processorNumber * size;
+                arr[i-1] = ((size - i) + processorNumber * size) % 10000;
             }
             break;
         case NOISE:
             for (size_t i = 0; i < size; i++) {
-                arr[i] = i + processorNumber * size;
+                arr[i] = (i + processorNumber * size) % 10000;
             }
             for (size_t i = 0; i < size / 100; i++) {
                 arr[rand() % size] = rand() % 10000;
@@ -145,13 +145,20 @@ int main(int argc, char* argv[]) {
     CALI_MARK_END("comm_large"); //COMM LARGE END=======================================================
     
     CALI_MARK_BEGIN("comm_small"); //COMM SMALL BEGIN=======================================================
+    
     // Print initial arrays at root
     // if (rank == 0) {
         // printf("Initial Arrays:\n");
+        // Assuming all_arrays is a flattened vector of all elements from all processors
         // for (int i = 0; i < numprocs; i++) {
-            // PrintArray(all_arrays + i * sizeOfArray, sizeOfArray, i);
+            // printf("Processor %d, array: ", i);
+            // for (size_t j = 0; j < sizeOfArray; j++) {
+                // printf("%d ", all_arrays[i * sizeOfArray + j]);
+            // }
+            // printf("\n");
         // }
     // }
+    
     CALI_MARK_END("comm_small"); //COMM SMALL END=======================================================
     
     CALI_MARK_END("comm"); //COMM END=======================================================
@@ -171,11 +178,16 @@ int main(int argc, char* argv[]) {
     
     CALI_MARK_END("comp"); //COMP END=======================================================
     
-    // Print sorted arrays at root
-    if (rank == 0) {
+    
+    if (rank == 0) {   
+        // Print sorted arrays at root 
         // printf("Sorted Arrays:\n");
         // for (int i = 0; i < numprocs; i++) {
-            // PrintArray(all_arrays + i * sizeOfArray, sizeOfArray, i);
+            // printf("Processor %d, array: ", i);
+            // for (size_t j = 0; j < sizeOfArray; j++) {
+                // printf("%d ", all_arrays[i * sizeOfArray + j]);
+            // }
+            // printf("\n");
         // }
         
         // Check correctness of the whole sorted array
