@@ -23,31 +23,31 @@ const char* comp = "comp";
 const char* comp_small = "comp_small";
 const char* comp_large = "comp_large";
 
-int* GenerateArray(int size, int inputType, int processorNumber) {
-    int* arr = new int[size];
-    srand(static_cast<unsigned int>(rand()) + processorNumber * 100);
+std::vector<size_t> GenerateArray(size_t size, size_t inputType, size_t processorNumber) {
+    std::vector<size_t> arr(size);
+    srand(static_cast<unsigned size_t>(rand()) + processorNumber * 100);
 
     switch (inputType) {
         case RANDOM:
-            for (int i = 0; i < size; i++) {
+            for (size_t i = 0; i < size; i++) {
                 arr[i] = rand() % 10000;
             }
             break;
         case SORTED:
-            for (int i = 0; i < size; i++) {
+            for (size_t i = 0; i < size; i++) {
                 arr[i] = i + processorNumber * size;
             }
             break;
         case REVERSE_SORTED:
-            for (int i = size - 1; i >= 0; i--) {
-                arr[i] = (size - i - 1) + processorNumber * size;
+            for (size_t i = size; i > 0; i--) {
+                arr[i-1] = (size - i) + processorNumber * size;
             }
             break;
         case NOISE:
-            for (int i = 0; i < size; i++) {
+            for (size_t i = 0; i < size; i++) {
                 arr[i] = i + processorNumber * size;
             }
-            for (int i = 0; i < size / 100; i++) {
+            for (size_t i = 0; i < size / 100; i++) {
                 arr[rand() % size] = rand() % 10000;
             }
             break;
@@ -56,16 +56,16 @@ int* GenerateArray(int size, int inputType, int processorNumber) {
     return arr;
 }
 
-void PrintArray(int* arr, int size, int processorNumber) {
+void PrintArray(const std::vector<size_t>& arr, size_t processorNumber) {
     printf("Processor %d, array: ", processorNumber);
-    for (int i = 0; i < size; i++) {
+    for (size_t i = 0; i < arr.size(); i++) {
         printf("%d ", arr[i]);
     }
     printf("\n");
 }
 
-bool SortedVerification(int* arr, int size) {
-    for (int i = 1; i < size; i++) {
+bool SortedVerification(const std::vector<size_t>& arr) {
+    for (size_t i = 1; i < arr.size(); i++) {
         if (arr[i - 1] > arr[i]) {
             return false;
         }
@@ -73,41 +73,42 @@ bool SortedVerification(int* arr, int size) {
     return true;
 }
 
-void ParallelRadixSort(int* arr, int size, int rank, int numprocs) {
-    int global_max;
-    int local_max = *std::max_element(arr, arr + size);
+void ParallelRadixSort(std::vector<size_t>& arr, size_t rank, size_t numprocs) {
+    size_t global_max;
+    size_t local_max = *std::max_element(arr.begin(), arr.end());
     MPI_Allreduce(&local_max, &global_max, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
     
-    for (int exp = 1; global_max / exp > 0; exp *= 10) {
-        std::vector<int> temp(size, 0);
-        int bucket[10] = {0};
+    std::vector<size_t> temp(arr.size());
+    size_t bucket[10], offset[10];
+    
+    for (size_t exp = 1; global_max / exp > 0; exp *= 10) {
+        std::fill_n(bucket, 10, 0);
 
-        for (int i = 0; i < size; i++) {
-            int index = (arr[i] / exp) % 10;
+        for (size_t i = 0; i < arr.size(); i++) {
+            size_t index = (arr[i] / exp) % 10;
             bucket[index]++;
         }
 
-        std::vector<int> offset(10, 0);
-        for (int i = 1; i < 10; i++) {
+        offset[0] = 0;
+        for (size_t i = 1; i < 10; i++) {
             offset[i] = offset[i - 1] + bucket[i - 1];
         }
 
-        for (int i = 0; i < size; i++) {
-            int index = (arr[i] / exp) % 10;
-            temp[offset[index]] = arr[i];
-            offset[index]++;
+        for (size_t i = 0; i < arr.size(); i++) {
+            size_t index = (arr[i] / exp) % 10;
+            temp[offset[index]++] = arr[i];
         }
 
-        std::copy(temp.begin(), temp.end(), arr);
+        arr.swap(temp);  // Swaps the contents of temp and arr efficiently
     }
 }
 
-int main(int argc, char* argv[]) {
-    int sizeOfArray;
-    int inputType;
+int main(size_t argc, char* argv[]) {
+    size_t sizeOfArray;
+    size_t inputType;
 
     if (argc == 3) {
-        sizeOfArray = atoi(argv[1]);
+        sizeOfArray = static_cast<size_t>(atoll(argv[1]));
         inputType = atoi(argv[2]);
     } else {
         fprintf(stderr, "Usage: %s sizeOfArray inputType\n", argv[0]);
@@ -115,7 +116,7 @@ int main(int argc, char* argv[]) {
     }
 
     MPI_Init(&argc, &argv);
-    int rank, numprocs;
+    size_t rank, numprocs;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     
@@ -125,20 +126,22 @@ int main(int argc, char* argv[]) {
     CALI_MARK_BEGIN("main"); //MAIN BEGIN=======================================================
     
     CALI_MARK_BEGIN("data_init_runtime"); //DATA INIT BEGIN=======================================================
-    int* arr = GenerateArray(sizeOfArray, inputType, rank);
+    std::vector<size_t> arr = GenerateArray(sizeOfArray, inputType, rank);
+
+
     
     
     // Gather initial arrays at root
-    int* all_arrays = NULL;
+    std::vector<size_t> all_arrays;
     if (rank == 0) {
-        all_arrays = new int[sizeOfArray * numprocs];
+        all_arrays.resize(sizeOfArray * numprocs);
     }
     CALI_MARK_END("data_init_runtime"); //DATA INIT END=======================================================
-    
+    MPI_Barrier(MPI_COMM_WORLD);
     CALI_MARK_BEGIN("comm"); //COMM BEGIN=======================================================
     
     CALI_MARK_BEGIN("comm_large"); //COMM LARGE BEGIN=======================================================
-    MPI_Gather(arr, sizeOfArray, MPI_INT, all_arrays, sizeOfArray, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(arr.data(), sizeOfArray, MPI_INT, all_arrays.data(), sizeOfArray, MPI_INT, 0, MPI_COMM_WORLD);
     CALI_MARK_END("comm_large"); //COMM LARGE END=======================================================
     
     CALI_MARK_BEGIN("comm_small"); //COMM SMALL BEGIN=======================================================
@@ -154,17 +157,16 @@ int main(int argc, char* argv[]) {
     CALI_MARK_END("comm"); //COMM END=======================================================
     
     
-    
     CALI_MARK_BEGIN("comp"); //COMP BEGIN=======================================================
     
     CALI_MARK_BEGIN("comp_large"); //COMP LARGE BEGIN=======================================================
-    ParallelRadixSort(arr, sizeOfArray, rank, numprocs);
+    ParallelRadixSort(arr, rank, numprocs);
+    MPI_Barrier(MPI_COMM_WORLD);
     CALI_MARK_END("comp_large"); //COMP LARGE END=======================================================
-    
     
     // Gather sorted arrays at root
     CALI_MARK_BEGIN("comp_small"); //COMP SMALL BEGIN=======================================================
-    MPI_Gather(arr, sizeOfArray, MPI_INT, all_arrays, sizeOfArray, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(arr.data(), sizeOfArray, MPI_INT, all_arrays.data(), sizeOfArray, MPI_INT, 0, MPI_COMM_WORLD);
     CALI_MARK_END("comp_small"); //COMP SMALL END=======================================================
     
     CALI_MARK_END("comp"); //COMP END=======================================================
@@ -179,8 +181,8 @@ int main(int argc, char* argv[]) {
         // Check correctness of the whole sorted array
         CALI_MARK_BEGIN("correctness_check"); //CORRECTNESS BEGIN=======================================================
         bool isSortedCorrectly = true;
-        for (int i = 0; i < numprocs; i++) {
-            if (!SortedVerification(all_arrays + i * sizeOfArray, sizeOfArray)) {
+        for (size_t i = 0; i < numprocs; i++) {
+            if (!SortedVerification(std::vector<size_t>(all_arrays.begin() + i * sizeOfArray, all_arrays.begin() + (i + 1) * sizeOfArray))) {
                 isSortedCorrectly = false;
                 printf("Array segment %d is not sorted correctly.\n", i);
             }
@@ -193,10 +195,8 @@ int main(int argc, char* argv[]) {
         }
         CALI_MARK_END("correctness_check"); //CORRECTNESS END=======================================================
     
-        delete[] all_arrays; // free memory
     }
     
-    delete[] arr;
     
     CALI_MARK_END("main"); //MAIN END=======================================================
     
