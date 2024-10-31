@@ -4,183 +4,196 @@
 #include <iostream>
 #include <random>
 #include <cstdlib>
+#include <chrono>
 #include <caliper/cali.h>
 #include <caliper/cali-manager.h>
 #include <adiak.hpp>
+#include <sstream>
 
-// merge two sorted vectors
-void mergeArrays(const std::vector<int>& left, const std::vector<int>& right, std::vector<int>& merged) {
-    CALI_CXX_MARK_FUNCTION;
-    merged.clear();
-    merged.reserve(left.size() + right.size());
-    size_t i = 0, j = 0;
-    while (i < left.size() && j < right.size()) {
-        if (left[i] <= right[j]) {
-            merged.push_back(left[i++]);
-        } else {
-            merged.push_back(right[j++]);
-        }
-    }
-    
-    merged.insert(merged.end(), left.begin() + i, left.end());
-    merged.insert(merged.end(), right.begin() + j, right.end());
-}
-
-void recursiveMergeSort(std::vector<int>& arr, int start, int end) {
-    CALI_CXX_MARK_FUNCTION;
-    if (start < end) {
-        int mid = start + (end - start) / 2;
-
-        std::vector<int> left(arr.begin() + start, arr.begin() + mid + 1);
-        std::vector<int> right(arr.begin() + mid + 1, arr.begin() + end + 1);
-        CALI_MARK_BEGIN("comp");
-        CALI_MARK_BEGIN("comp_small");
-        recursiveMergeSort(left, 0, left.size() - 1);
-        recursiveMergeSort(right, 0, right.size() - 1);
-        CALI_MARK_END("comp_small");
-        CALI_MARK_END("comp");
-
-        CALI_MARK_BEGIN("comp");
-        CALI_MARK_BEGIN("comp_large");
-        std::vector<int> sorted(end - start + 1);
-        mergeArrays(left, right, sorted);
-        CALI_MARK_END("comp_large");
-        CALI_MARK_END("comp");
-
-        std::copy(sorted.begin(), sorted.end(), arr.begin() + start);
-    }
-}
-
-void executeParallelMergeSort(std::vector<int>& arr, int array_size, int rank, int num_procs) {
-    CALI_CXX_MARK_FUNCTION;
-
-    int chunk_size = array_size / num_procs;
-    int remainder = array_size % num_procs;
-
-    std::vector<int> local_chunk((rank == num_procs - 1) ? (chunk_size + remainder) : chunk_size);
-
-    std::vector<int> send_counts(num_procs);
-    std::vector<int> displacements(num_procs);
-
-    for (int i = 0; i < num_procs; ++i) {
-        send_counts[i] = (i == num_procs - 1) ? (chunk_size + remainder) : chunk_size;
-        displacements[i] = i * chunk_size;
-    }
-
-    MPI_Scatterv(rank == 0 ? arr.data() : nullptr, send_counts.data(), displacements.data(), MPI_INT, 
-                 local_chunk.data(), local_chunk.size(), MPI_INT, 0, MPI_COMM_WORLD);
-
-    recursiveMergeSort(local_chunk, 0, local_chunk.size() - 1);
-
-    MPI_Gatherv(local_chunk.data(), local_chunk.size(), MPI_INT, arr.data(), send_counts.data(),
-                displacements.data(), MPI_INT, 0, MPI_COMM_WORLD);
-}
-
-void initializeData(std::vector<int>& arr, int size, const std::string& pattern) {
-    CALI_CXX_MARK_FUNCTION;
-    arr.resize(size);
+void initialize_data(std::vector<int>& data_vector, long long size, const std::string& data_type) {
     CALI_MARK_BEGIN("data_init_runtime");
-    if (pattern == "Sorted") {
-        for (int i = 0; i < size; ++i) {
-            arr[i] = i;
+    data_vector.resize(size);
+
+    if (data_type == "Sorted") {
+        std::iota(data_vector.begin(), data_vector.end(), 0);
+    } else if (data_type == "Reverse") {
+        std::iota(data_vector.rbegin(), data_vector.rend(), 0);
+    } else if (data_type == "Random") {
+        std::random_device random_device;
+        std::mt19937 generator(random_device());
+        std::uniform_int_distribution<> distribution(0, size - 1);
+        for (int& val : data_vector) {
+            val = distribution(generator);
         }
-    } else if (pattern == "ReverseSorted") {
-        for (int i = 0; i < size; ++i) {
-            arr[i] = size - i - 1;
-        }
-    } else if (pattern == "Random") {
-        std::generate(arr.begin(), arr.end(), []() { return rand() % 10000; });
-    } else if (pattern == "1_perc_perturbed") {
-        for (int i = 0; i < size; ++i) {
-            arr[i] = i;
-        }
-        for (int i = 0; i < size / 100; ++i) {
-            int idx1 = rand() % size;
-            int idx2 = rand() % size;
-            std::swap(arr[idx1], arr[idx2]);
+    } else if (data_type == "Perturbed") {
+        std::iota(data_vector.begin(), data_vector.end(), 0);
+        int perturb_count = size / 100;
+        std::random_device random_device;
+        std::mt19937 generator(random_device());
+        std::uniform_int_distribution<> distribution(0, size - 1);
+        for (int i = 0; i < perturb_count; ++i) {
+            std::swap(data_vector[distribution(generator)], data_vector[distribution(generator)]);
         }
     }
     CALI_MARK_END("data_init_runtime");
 }
 
-bool validateSorted(const std::vector<int>& arr) {
-    CALI_CXX_MARK_FUNCTION;
+void merge_vectors(std::vector<int>& vec, long long left, long long mid, long long right) {
+    std::vector<int> temp_buffer(right - left + 1);
+    long long left_idx = left, right_idx = mid + 1, temp_idx = 0;
+
+    while (left_idx <= mid && right_idx <= right) {
+        temp_buffer[temp_idx++] = (vec[left_idx] <= vec[right_idx]) ? vec[left_idx++] : vec[right_idx++];
+    }
+    while (left_idx <= mid) {
+        temp_buffer[temp_idx++] = vec[left_idx++];
+    }
+    while (right_idx <= right) {
+        temp_buffer[temp_idx++] = vec[right_idx++];
+    }
+    for (temp_idx = 0; temp_idx < temp_buffer.size(); temp_idx++){
+        vec[left + temp_idx] = temp_buffer[temp_idx];
+    }
+}
+
+void recursive_merge_sort(std::vector<int>& vec, long long start, long long end) {
+    if (start < end) {
+        long long middle = start + (end - start) / 2;
+        recursive_merge_sort(vec, start, middle);
+        recursive_merge_sort(vec, middle + 1, end);
+        merge_vectors(vec, start, middle, end);
+    }
+}
+
+void distributed_merge_sort(std::vector<int>& data_vector, int rank, int world_size) {
+    size_t global_size = (rank == 0) ? data_vector.size() : 0;
+    MPI_Bcast(&global_size, 1, MPI_UNSIGNED_LONG_LONG, 0, MPI_COMM_WORLD);
+    size_t chunk_size = global_size / world_size;
+    size_t extra = global_size % world_size;
+
+    std::vector<int> segment_counts(world_size), displacements(world_size);
+    size_t offset = 0;
+    for (int i = 0; i < world_size; ++i) {
+        segment_counts[i] = static_cast<int>(chunk_size + (i < extra ? 1 : 0));
+        displacements[i] = static_cast<int>(offset);
+        offset += segment_counts[i];
+    }
+
+    MPI_Bcast(segment_counts.data(), world_size, MPI_INT, 0, MPI_COMM_WORLD);
+    size_t local_data_size = segment_counts[rank];
+    std::vector<int> local_data(local_data_size);
+
+    CALI_MARK_BEGIN("comm");
+    CALI_MARK_BEGIN("comm_large");
+    MPI_Scatterv(rank == 0 ? data_vector.data() : nullptr, segment_counts.data(), displacements.data(), MPI_INT, local_data.data(), local_data_size, MPI_INT, 0, MPI_COMM_WORLD);
+    CALI_MARK_END("comm_large");
+    CALI_MARK_END("comm");
+
+    CALI_MARK_BEGIN("comp");
+    CALI_MARK_BEGIN("comp_large");
+    recursive_merge_sort(local_data, 0, local_data_size - 1);
+    CALI_MARK_END("comp_large");
+    CALI_MARK_END("comp");
+
+    std::vector<int> all_sizes(world_size);
+    MPI_Allgather(&local_data_size, 1, MPI_INT, all_sizes.data(), 1, MPI_INT, MPI_COMM_WORLD);
+
+    for (int step = 1; step < world_size; step *= 2) {
+        if (rank % (2 * step) == 0 && (rank + step < world_size)) {
+            int neighbor_data_size = all_sizes[rank + step];
+            std::vector<int> received_data;
+
+            CALI_MARK_BEGIN("comm");
+            CALI_MARK_BEGIN("comm_large");
+            MPI_Status status;
+            MPI_Probe(rank + step, 0, MPI_COMM_WORLD, &status);
+            int actual_size;
+            MPI_Get_count(&status, MPI_INT, &actual_size);
+
+            received_data.resize(actual_size);
+            MPI_Recv(received_data.data(), actual_size, MPI_INT, rank + step, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+            CALI_MARK_END("comm_large");
+            CALI_MARK_END("comm");
+            CALI_MARK_BEGIN("comp");
+            CALI_MARK_BEGIN("comp_large");
+            std::vector<int> merged_data(local_data.size() + received_data.size());
+            std::merge(local_data.begin(), local_data.end(), received_data.begin(), received_data.end(), merged_data.begin());
+            local_data = std::move(merged_data);
+            CALI_MARK_END("comp_large");
+            CALI_MARK_END("comp");
+        } else if (rank % (2 * step) != 0) {
+            int target_rank = rank - step;
+            if (target_rank >= 0) {
+                CALI_MARK_BEGIN("comm");
+                CALI_MARK_BEGIN("comm_large");
+                MPI_Send(local_data.data(), local_data.size(), MPI_INT, target_rank, 0, MPI_COMM_WORLD);
+                CALI_MARK_END("comm_large");
+                CALI_MARK_END("comm");
+                break;
+            }
+        }
+    }
+
+    if (rank == 0) data_vector = std::move(local_data);
+}
+
+bool verify_sorted(const std::vector<int>& vec) {
     CALI_MARK_BEGIN("correctness_check");
-    bool sorted = std::is_sorted(arr.begin(), arr.end());
+    bool sorted = std::is_sorted(vec.begin(), vec.end());
     CALI_MARK_END("correctness_check");
     
     return sorted;
 }
 
 int main(int argc, char** argv) {
-    CALI_CXX_MARK_FUNCTION;
-    cali::ConfigManager mgr;
-    mgr.add("runtime-report");
-    mgr.start();
-    MPI_Init(&argc, &argv);
-    int rank, num_procs;
+    CALI_MARK_BEGIN("main");
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, nullptr);
+    int rank, world_size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    int array_size = 0;
-    std::string input_type = "Random"; 
-
-    if (rank == 0) {
-        if (argc != 3) {
+    if (argc != 3) {
+        if (rank == 0) {
             std::cerr << "Usage: " << argv[0] << " <array_size> <input_type>" << std::endl;
-            MPI_Abort(MPI_COMM_WORLD, 1);
         }
-        array_size = std::atoi(argv[1]);
-        input_type = argv[2];
+        MPI_Finalize();
+        return 1;
     }
 
-    MPI_Bcast(&array_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    int input_type_length = input_type.length();
-    MPI_Bcast(&input_type_length, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-    char* input_type_buffer = new char[input_type_length + 1];
-    if (rank == 0) {
-        std::strcpy(input_type_buffer, input_type.c_str());
-    }
-    MPI_Bcast(input_type_buffer, input_type_length + 1, MPI_CHAR, 0, MPI_COMM_WORLD);
-    input_type = std::string(input_type_buffer);
-    delete[] input_type_buffer;
+    size_t data_size = std::atoi(argv[1]);
+    std::string data_type = argv[2];
 
     adiak::init(NULL);
     adiak::launchdate();
     adiak::libraries();
     adiak::cmdline();
     adiak::clustername();
-    adiak::value("algorithm", "parallel_merge_sort");
-    adiak::value("programming_model", "MPI");
+    adiak::value("algorithm", "merge");
+    adiak::value("programming_model", "mpi");
     adiak::value("data_type", "int");
     adiak::value("size_of_data_type", sizeof(int));
-    adiak::value("input_size", array_size);
-    adiak::value("input_type", input_type);
-    adiak::value("num_procs", num_procs);
+    adiak::value("input_size", data_size);
+    adiak::value("input_type", data_type);
+    adiak::value("num_procs", world_size);
     adiak::value("scalability", "strong");
     adiak::value("group_num", 19);
     adiak::value("implementation_source", "handwritten");
 
-    std::vector<int> data(array_size);
+    std::vector<int> data;
     if (rank == 0) {
-        initializeData(data, array_size, input_type);
+        initialize_data(data, data_size, data_type);
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    executeParallelMergeSort(data, array_size, rank, num_procs);
+    distributed_merge_sort(data, rank, world_size);
 
     if (rank == 0) {
-        if (validateSorted(data)) {
-            std::cout << "Array is sorted correctly." << std::endl;
-        } else {
-            std::cout << "Array is NOT sorted correctly." << std::endl;
-        }
+        bool is_sorted = verify_sorted(data);
     }
 
-    mgr.stop();
-    mgr.flush();
-
     MPI_Finalize();
+    CALI_MARK_END("main");
+
     return 0;
 }
