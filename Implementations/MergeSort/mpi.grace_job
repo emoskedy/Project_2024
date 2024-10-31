@@ -27,10 +27,10 @@ module load GCCcore/8.3.0
 module load PAPI/6.0.0
 
 # Ensure the caliFiles directory exists
-mkdir -p caliFiles
+mkdir -p merge_sort_cali_files
 
 # Save .cali files in the caliFiles directory
-CALI_CONFIG="spot(output=caliFiles/${matrix_size}-${processes}-${type}.cali,time.variance,profile.mpi)" \
+CALI_CONFIG="spot(output=merge_sort_cali_files/${matrix_size}-${processes}-${type}.cali,time.variance,profile.mpi)" \
 mpirun -np $processes ./mergesort $matrix_size $type   # Pass all arguments to the executable
 
 squeue -j $SLURM_JOBID
