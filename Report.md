@@ -572,43 +572,46 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ### Performance Analysis
 ### Bitonic Sort
 #### Main graphs
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_min_max_avg_main.png)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_min_max_avg_main.png)
+![2^16_random_min_max_avg_main](https://github.com/user-attachments/assets/c6a3f877-de34-4d50-aa98-ad6eb9490086)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_total_time_main.png)
+![2^28_random_min_max_avg_main](https://github.com/user-attachments/assets/4c4b1f22-2b2b-4075-a3ee-13c542c734ae)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_total_time_main.png)
+![2^16_random_total_time_main](https://github.com/user-attachments/assets/ff505878-8aaf-4a01-a99f-e6fe0238b6d4)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_variance_main.png)
+![2^28_random_total_time_main](https://github.com/user-attachments/assets/98e1451e-d571-4f6f-bea6-2f3d147bc726)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_variance_main.png)
+![2^16_random_variance_main](https://github.com/user-attachments/assets/26beceec-a9e1-4cd3-a8ae-3c133bc523cd)
+
+![2^28_random_variance_main](https://github.com/user-attachments/assets/fe8b203a-378e-467d-8d37-db4e1d51ddbb)
 
 #### Comm graphs
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_min_max_avg_comm.png)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_min_max_avg_comm.png)
+![2^16_random_min_max_avg_comm](https://github.com/user-attachments/assets/4da9cbc4-777d-4aad-8215-e8c490e83192)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_total_time_comm.png)
+![2^28_random_min_max_avg_comm](https://github.com/user-attachments/assets/618f1fb3-c663-45eb-ae25-075a4af0eb74)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_total_time_comm.png)
+![2^16_random_total_time_comm](https://github.com/user-attachments/assets/0e831346-49a4-4172-bb24-908b1daacdb4)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_variance_comm.png)
+![2^28_random_total_time_comm](https://github.com/user-attachments/assets/9538cb73-b3d7-495c-b2f6-2e2c3395f9d8)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_variance_comm.png)
+![2^16_random_variance_comm](https://github.com/user-attachments/assets/3a9045a0-51f4-4429-a40c-c475aad898dc)
+
+![2^28_random_variance_comm](https://github.com/user-attachments/assets/622bc5b2-27e5-4566-b267-f925a459461d)
 
 #### Comp Large graphs
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_min_max_avg_comp_large.png)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_min_max_avg_comp_large.png)
+![2^16_random_min_max_avg_comp_large](https://github.com/user-attachments/assets/ceaec32d-a14d-449c-97d3-fbad939b7f5e)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_total_time_comp_large.png)
+![2^28_random_min_max_avg_comp_large](https://github.com/user-attachments/assets/9c3ee1d9-36a0-4e48-89ab-6e4ce11993e6)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_total_time_comp_large.png)
+![2^16_random_total_time_comp_large](https://github.com/user-attachments/assets/d290d63a-3aa2-492c-a35a-079fd72fe44a)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_variance_comp_large.png)
+![2^28_random_total_time_comp_large](https://github.com/user-attachments/assets/42f8ad94-30f8-4f0c-b96d-d2e545b90b12)
 
-![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_variance_comp_large.png)
+![2^16_random_variance_comp_large](https://github.com/user-attachments/assets/953f8d37-a714-414b-ade7-22be67f9bbda)
+
+![2^28_random_variance_comp_large](https://github.com/user-attachments/assets/d4575063-4ad4-4d12-8a14-f66237b42456)
 
 #### Analysis
 - With Min, Avg, and Max time, the graphs show a clear trend. As the number of processors increases, the execution time decreases significantly at first, then flat or reduces more slowly. This trend is expected in parallel computing, where having too many processors can lead to overhead and resource contention. With a larger input size, having more processors is beneficial while a smaller input size may not be the case.
