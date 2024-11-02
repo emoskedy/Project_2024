@@ -399,18 +399,24 @@ CALI_MARK_END("comp");
 ```
 - Radix Sort
 ```
-6.547 main
-├─ 0.000 MPI_Init
-├─ 0.024 data_init_runtime
-├─ 3.023 MPI_Barrier
-└─ 0.005 correctness_check
-   ├─ 0.000 MPI_Send
-   └─ 0.004 MPI_Recv
-3.057 MPI_Barrier
+18.255 MPI_Comm_dup
 0.000 MPI_Finalize
-0.000 MPI_Initialized
 0.000 MPI_Finalized
-0.000 MPI_Comm_dup
+0.000 MPI_Initialized
+11.197 main
+├─ nan MPI_Barrier
+├─ 8.481 comm
+│  ├─ 8.481 comm_large
+│  │  └─ 8.481 MPI_Gather
+│  └─ 0.000 comm_small
+├─ 2.628 comp
+│  ├─ 2.211 comp_large
+│  │  ├─ 0.867 MPI_Allreduce
+│  │  └─ nan MPI_Barrier
+│  └─ 0.417 comp_small
+│     └─ 0.417 MPI_Gather
+├─ 17.942 correctness_check
+└─ 0.052 data_init_runtime
 ```
 - Sample Sort
 ```
