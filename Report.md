@@ -564,6 +564,11 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
     - Variance time/rank
 
 ### Performance Analysis
+## Bitonic Sort
+## Merge Sort
+## Radix Sort
+## Sample Sort
+
 - Due to not being able to run Jupiter Notebook and jobs on Grace, we couldn't provide the graphs on time, but we have provided cali files in this project, with min, max, avg, total time, and variance time/rank.
 - ![metric](img/metrics.png)
 ## 5. Presentation
