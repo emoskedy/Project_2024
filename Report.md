@@ -565,6 +565,51 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 
 ### Performance Analysis
 ### Bitonic Sort
+#### Main graphs
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_min_max_avg_main.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_min_max_avg_main.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_total_time_main.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_total_time_main.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_variance_main.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_variance_main.png)
+
+#### Comm graphs
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_min_max_avg_comm.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_min_max_avg_comm.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_total_time_comm.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_total_time_comm.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_variance_comm.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_variance_comm.png)
+
+#### Comp Large graphs
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_min_max_avg_comp_large.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_min_max_avg_comp_large.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_total_time_comp_large.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_total_time_comp_large.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^16_random_variance_comp_large.png)
+
+![metric](Implementations/BitonicSort/plots/section4_graphs/random/2^28_random_variance_comp_large.png)
+
+#### Analysis
+- With Min, Avg, and Max time, the graphs show a clear trend. As the number of processors increases, the execution time decreases significantly at first, then flat or reduces more slowly. This trend is expected in parallel computing, where having too many processors can lead to overhead and resource contention. With a larger input size, having more processors is beneficial while a smaller input size may not be the case.
+- With variance time, for a larger input size, the variance decreases as the number of processors increases, showcasing a better load balancing with higher process counts. For a smaller input size, variance is minial across processors but spikes at 256 processors. This shows inefficiencies in workload distribution, possibly due to communication overhead.
+- The total time shows a nearly exponential increase as the number of processors increases, particularly for a larger input size. The smaller input size looks more stable with lower process counts.
+- In conclusion, the bitonic sort algorithm performs best when the number of processors is matched to the input size. Using too many processors for smaller input sizes causes communication overheads while larger input size benefits more, leading to better computation.
+
 ### Merge Sort
 ![image](https://github.com/user-attachments/assets/70807ff6-a8d6-4abf-b2f5-8a2a901de0ea)
 
