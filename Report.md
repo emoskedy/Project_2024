@@ -566,6 +566,7 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ### Performance Analysis
 ### Bitonic Sort
 #### Main graphs
+
 ![2^16_random_min_max_avg_main](https://github.com/user-attachments/assets/c6a3f877-de34-4d50-aa98-ad6eb9490086)
 
 ![2^28_random_min_max_avg_main](https://github.com/user-attachments/assets/4c4b1f22-2b2b-4075-a3ee-13c542c734ae)
@@ -579,6 +580,7 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ![2^28_random_variance_main](https://github.com/user-attachments/assets/fe8b203a-378e-467d-8d37-db4e1d51ddbb)
 
 #### Comm graphs
+
 ![2^16_random_min_max_avg_comm](https://github.com/user-attachments/assets/4da9cbc4-777d-4aad-8215-e8c490e83192)
 
 ![2^28_random_min_max_avg_comm](https://github.com/user-attachments/assets/618f1fb3-c663-45eb-ae25-075a4af0eb74)
@@ -592,6 +594,7 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ![2^28_random_variance_comm](https://github.com/user-attachments/assets/622bc5b2-27e5-4566-b267-f925a459461d)
 
 #### Comp Large graphs
+
 ![2^16_random_min_max_avg_comp_large](https://github.com/user-attachments/assets/ceaec32d-a14d-449c-97d3-fbad939b7f5e)
 
 ![2^28_random_min_max_avg_comp_large](https://github.com/user-attachments/assets/9c3ee1d9-36a0-4e48-89ab-6e4ce11993e6)
