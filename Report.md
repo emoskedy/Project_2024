@@ -680,7 +680,9 @@ Parallelism is achieved when processor count matches input size. Large inputs be
 ![metric](Implementations/RadixSort/plots/section4graphs/variance_complarge.png)
 
 #### Analysis
-
+- On min, max, avg, and total time graphs, there shows a very similar and understandable trend. As we increase the number of processors, the execution time increases. It starts rising significantly starting at around 64 processors. For the variance graph, there are some small fluctuations from 64 to 128 processors. Though it returns back to the trend we have seen on other graphs.
+- Overall, random input type usually have lower execution time. This is likely due to the algorithm's efficiency in processing evenly distributed data for better workload balancing and reduces overheads. Sorted, Reverse Sorted, and 1% Pertubed inputs show similar time, which is probably inefficiencies, load imbalances, or disrupt the uniformity expected by the algorithm which leads to longer execution time
+- Radix sort excels in scenerios where digit processing aligns with the algorithm’s design, showcasing strong performance and scalability. However, it may be outperformed by comparison-based algorithms like merge sort or bitonic sort for input types that introduce uneven workload distribution or significant communication overheads in parallel settings.
 
 ### Sample Sort
 
