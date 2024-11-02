@@ -644,6 +644,30 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ![image](https://github.com/user-attachments/assets/5c8da8b1-ba8d-485c-9735-59d164486177)
 
 ### Radix Sort
+#### Main graphs
+![metric](Implementations/RadixSort/plots/section4graphs/min_main.png)
+![metric](Implementations/RadixSort/plots/section4graphs/max_main.png)
+![metric](Implementations/RadixSort/plots/section4graphs/avg_main.png)
+![metric](Implementations/RadixSort/plots/section4graphs/total_main.png)
+![metric](Implementations/RadixSort/plots/section4graphs/variance_main.png)
+
+#### Comm graphs
+![metric](Implementations/RadixSort/plots/section4graphs/min_comm.png)
+![metric](Implementations/RadixSort/plots/section4graphs/max_comm.png)
+![metric](Implementations/RadixSort/plots/section4graphs/avg_comm.png)
+![metric](Implementations/RadixSort/plots/section4graphs/total_comm.png)
+![metric](Implementations/RadixSort/plots/section4graphs/variance_comm.png)
+
+#### Comp Large graphs
+![metric](Implementations/RadixSort/plots/section4graphs/min_complarge.png)
+![metric](Implementations/RadixSort/plots/section4graphs/max_complarge.png)
+![metric](Implementations/RadixSort/plots/section4graphs/avg_complarge.png)
+![metric](Implementations/RadixSort/plots/section4graphs/total_complarge.png)
+![metric](Implementations/RadixSort/plots/section4graphs/variance_complarge.png)
+
+#### Analysis
+
+
 ### Sample Sort
 
 - Due to not being able to run Jupiter Notebook and jobs on Grace, we couldn't provide the graphs on time, but we have provided cali files in this project, with min, max, avg, total time, and variance time/rank.
