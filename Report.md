@@ -399,18 +399,24 @@ CALI_MARK_END("comp");
 ```
 - Radix Sort
 ```
-6.547 main
-├─ 0.000 MPI_Init
-├─ 0.024 data_init_runtime
-├─ 3.023 MPI_Barrier
-└─ 0.005 correctness_check
-   ├─ 0.000 MPI_Send
-   └─ 0.004 MPI_Recv
-3.057 MPI_Barrier
+18.255 MPI_Comm_dup
 0.000 MPI_Finalize
-0.000 MPI_Initialized
 0.000 MPI_Finalized
-0.000 MPI_Comm_dup
+0.000 MPI_Initialized
+11.197 main
+├─ nan MPI_Barrier
+├─ 8.481 comm
+│  ├─ 8.481 comm_large
+│  │  └─ 8.481 MPI_Gather
+│  └─ 0.000 comm_small
+├─ 2.628 comp
+│  ├─ 2.211 comp_large
+│  │  ├─ 0.867 MPI_Allreduce
+│  │  └─ nan MPI_Barrier
+│  └─ 0.417 comp_small
+│     └─ 0.417 MPI_Gather
+├─ 17.942 correctness_check
+└─ 0.052 data_init_runtime
 ```
 - Sample Sort
 ```
@@ -566,7 +572,119 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ### Performance Analysis
 ### Bitonic Sort
 
+#### Main graphs
+
+![2^16_random_min_max_avg_main](https://github.com/user-attachments/assets/c6a3f877-de34-4d50-aa98-ad6eb9490086)
+
+![2^28_random_min_max_avg_main](https://github.com/user-attachments/assets/4c4b1f22-2b2b-4075-a3ee-13c542c734ae)
+
+![2^16_random_total_time_main](https://github.com/user-attachments/assets/ff505878-8aaf-4a01-a99f-e6fe0238b6d4)
+
+![2^28_random_total_time_main](https://github.com/user-attachments/assets/98e1451e-d571-4f6f-bea6-2f3d147bc726)
+
+![2^16_random_variance_main](https://github.com/user-attachments/assets/26beceec-a9e1-4cd3-a8ae-3c133bc523cd)
+
+![2^28_random_variance_main](https://github.com/user-attachments/assets/fe8b203a-378e-467d-8d37-db4e1d51ddbb)
+
+#### Comm graphs
+
+![2^16_random_min_max_avg_comm](https://github.com/user-attachments/assets/4da9cbc4-777d-4aad-8215-e8c490e83192)
+
+![2^28_random_min_max_avg_comm](https://github.com/user-attachments/assets/618f1fb3-c663-45eb-ae25-075a4af0eb74)
+
+![2^16_random_total_time_comm](https://github.com/user-attachments/assets/0e831346-49a4-4172-bb24-908b1daacdb4)
+
+![2^28_random_total_time_comm](https://github.com/user-attachments/assets/9538cb73-b3d7-495c-b2f6-2e2c3395f9d8)
+
+![2^16_random_variance_comm](https://github.com/user-attachments/assets/3a9045a0-51f4-4429-a40c-c475aad898dc)
+
+![2^28_random_variance_comm](https://github.com/user-attachments/assets/622bc5b2-27e5-4566-b267-f925a459461d)
+
+#### Comp Large graphs
+
+![2^16_random_min_max_avg_comp_large](https://github.com/user-attachments/assets/ceaec32d-a14d-449c-97d3-fbad939b7f5e)
+
+![2^28_random_min_max_avg_comp_large](https://github.com/user-attachments/assets/9c3ee1d9-36a0-4e48-89ab-6e4ce11993e6)
+
+![2^16_random_total_time_comp_large](https://github.com/user-attachments/assets/d290d63a-3aa2-492c-a35a-079fd72fe44a)
+
+![2^28_random_total_time_comp_large](https://github.com/user-attachments/assets/42f8ad94-30f8-4f0c-b96d-d2e545b90b12)
+
+![2^16_random_variance_comp_large](https://github.com/user-attachments/assets/953f8d37-a714-414b-ade7-22be67f9bbda)
+
+![2^28_random_variance_comp_large](https://github.com/user-attachments/assets/d4575063-4ad4-4d12-8a14-f66237b42456)
+
+#### Analysis
+- With Min, Avg, and Max time, the graphs show a clear trend. As the number of processors increases, the execution time decreases significantly at first, then flat or reduces more slowly. This trend is expected in parallel computing, where having too many processors can lead to overhead and resource contention. With a larger input size, having more processors is beneficial while a smaller input size may not be the case.
+- With variance time, for a larger input size, the variance decreases as the number of processors increases, showcasing a better load balancing with higher process counts. For a smaller input size, variance is minial across processors but spikes at 256 processors. This shows inefficiencies in workload distribution, possibly due to communication overhead.
+- The total time shows a nearly exponential increase as the number of processors increases, particularly for a larger input size. The smaller input size looks more stable with lower process counts.
+- In conclusion, the bitonic sort algorithm performs best when the number of processors is matched to the input size. Using too many processors for smaller input sizes causes communication overheads while larger input size benefits more, leading to better computation.
+
+### Merge Sort
+#### Main graphs
+![image](https://github.com/user-attachments/assets/bef24eb5-5eac-4f86-8977-cb6342ca344f)
+![image](https://github.com/user-attachments/assets/27cfeaf9-fd8d-4692-a396-b3e4efed5a80)
+![image](https://github.com/user-attachments/assets/2d394551-775e-4c97-8620-ff4c23c93bcd)
+![image](https://github.com/user-attachments/assets/1ade7fe6-97b0-4d27-a5a6-42d68c3c1a2f)
+![image](https://github.com/user-attachments/assets/99382481-03f4-42f3-bb77-0f5633e239f7)
+![image](https://github.com/user-attachments/assets/2dd95d0d-0d30-4b3b-9578-f8b44a3fa21b)
+
+#### Comm graphs
+![image](https://github.com/user-attachments/assets/4cf830e7-9467-4328-8c09-5265155cea79)
+![image](https://github.com/user-attachments/assets/6a277116-f85d-4e74-8f1a-3a7e3ed1d201)
+![image](https://github.com/user-attachments/assets/e4918adc-721b-478b-a128-85e0fcf27693)
+![image](https://github.com/user-attachments/assets/e04c1ae4-e3c9-4c28-906a-5448413ea111)
+![image](https://github.com/user-attachments/assets/36463cae-8a4f-4a1c-8d12-ec07516a8ba8)
+![image](https://github.com/user-attachments/assets/373c8385-d16e-4216-9d8b-bfc79646926e)
+
+#### Comp Large graphs
+![image](https://github.com/user-attachments/assets/eb68699d-9007-4a24-b9b0-b2cbf24f8c2e)
+![image](https://github.com/user-attachments/assets/b1d6cf86-b73c-4f13-9f4b-50ccc985ccdc)
+![image](https://github.com/user-attachments/assets/3d3552a7-0f0e-4c78-9620-4fae00698c0d)
+![image](https://github.com/user-attachments/assets/cbe8a7b7-3bc2-4c2a-9771-64eadf4870f8)
+![image](https://github.com/user-attachments/assets/c3627b0f-7397-4aa7-afdf-4ba82412c011)
+![image](https://github.com/user-attachments/assets/5c8da8b1-ba8d-485c-9735-59d164486177)
+
+#### Analysis
+##### Min, Max, Avg Time
+For both input sizes, adding processors initially improves execution time, however, the benefits diminish due to overhead. With the large input (2^28), parallelism is effective up to about 64 processors, after that the time savings diminish. For the small input (2^16), parallelism quickly becomes counterproductive beyond 32 processors as communication overhead starts to outweigh the parallel benefits. This shows that the effectiveness of parallelism depends heavily on matching processor count to workload size.
+
+##### Variance Time/Rank
+The variance in time per rank is generally low at lower processor counts for both input sizes indicating effective load balancing. However, at 256 processors, both input sizes show a spike likely due to communication overhead. For the large input, variance drops at 512 processors which suggests better load distribution. The smaller input continues to suffer from inefficiencies.
+
+##### Total Time
+The total time increases nearly exponentially as processor count rises, especially for the smaller input. While the large input can utilize more processors effectively, excessive parallelism for the small input leads to significant overhead, making high processor counts impractical for small workloads.
+
+##### Conclusion
+Parallelism is achieved when processor count matches input size. Large inputs benefit from higher parallelization while smaller inputs are hindered by too many processors. This emphasizes the need to balance processor count with workload size to avoid diminishing returns in parallel computing.
+
 ### Radix Sort
+#### Main graphs
+![metric](Implementations/RadixSort/plots/section4graphs/min_main.png)
+![metric](Implementations/RadixSort/plots/section4graphs/max_main.png)
+![metric](Implementations/RadixSort/plots/section4graphs/avg_main.png)
+![metric](Implementations/RadixSort/plots/section4graphs/total_main.png)
+![metric](Implementations/RadixSort/plots/section4graphs/variance_main.png)
+
+#### Comm graphs
+![metric](Implementations/RadixSort/plots/section4graphs/min_comm.png)
+![metric](Implementations/RadixSort/plots/section4graphs/max_comm.png)
+![metric](Implementations/RadixSort/plots/section4graphs/avg_comm.png)
+![metric](Implementations/RadixSort/plots/section4graphs/total_comm.png)
+![metric](Implementations/RadixSort/plots/section4graphs/variance_comm.png)
+
+#### Comp Large graphs
+![metric](Implementations/RadixSort/plots/section4graphs/min_complarge.png)
+![metric](Implementations/RadixSort/plots/section4graphs/max_complarge.png)
+![metric](Implementations/RadixSort/plots/section4graphs/avg_complarge.png)
+![metric](Implementations/RadixSort/plots/section4graphs/total_complarge.png)
+![metric](Implementations/RadixSort/plots/section4graphs/variance_complarge.png)
+
+#### Analysis
+- On min, max, avg, and total time graphs, there shows a very similar and understandable trend. As we increase the number of processors, the execution time increases. It starts rising significantly starting at around 64 processors. For the variance graph, there are some small fluctuations from 64 to 128 processors. Though it returns back to the trend we have seen on other graphs.
+- Overall, random input type usually have lower execution time. This is likely due to the algorithm's efficiency in processing evenly distributed data for better workload balancing and reduces overheads. Sorted, Reverse Sorted, and 1% Pertubed inputs show similar time, which is probably inefficiencies, load imbalances, or disrupt the uniformity expected by the algorithm which leads to longer execution time
+- Radix sort excels in scenerios where digit processing aligns with the algorithm’s design, showcasing strong performance and scalability. However, it may be outperformed by comparison-based algorithms like merge sort or bitonic sort for input types that introduce uneven workload distribution or significant communication overheads in parallel settings.
+
 ### Sample Sort
 
 - Due to not being able to run Jupiter Notebook and jobs on Grace, we couldn't provide the graphs on time, but we have provided cali files in this project, with min, max, avg, total time, and variance time/rank.
