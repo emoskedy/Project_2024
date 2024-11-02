@@ -565,28 +565,6 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 
 ### Performance Analysis
 ### Bitonic Sort
-### Merge Sort
-#### Input Size 2^16
-##### Average Time/Rank
-![image](https://github.com/user-attachments/assets/09da8606-a398-431b-a8ef-a1d28d4d99f6)
-![image](https://github.com/user-attachments/assets/66ac743d-5a29-49a9-bd80-04fbd6b67a60)
-![image](https://github.com/user-attachments/assets/021a87aa-7189-4bfe-9c02-9ff9b1a80c6a)
-
-
-#### Input Size 2^18
-#### Input Size 2^20
-#### Input Size 2^22
-#### Input Size 2^24
-#### Input Size 2^26
-
-
-![image](https://github.com/user-attachments/assets/250c6c8c-0ed4-46f6-b220-04724afc6bf3)
-![image](https://github.com/user-attachments/assets/2648ffd9-6234-4df4-b602-70503ca6bb71)
-
-![image](https://github.com/user-attachments/assets/6e5f21fb-9d58-4be5-a5b7-ff738b640d29)
-
-![image](https://github.com/user-attachments/assets/06be55a7-ff08-431f-b3e2-61ba7c698a7d)
-![image](https://github.com/user-attachments/assets/dec83c8e-2a7b-423d-9b11-5463e7ab0a8f)
 
 ### Radix Sort
 ### Sample Sort
@@ -602,6 +580,68 @@ Plots for the presentation should be as follows:
         - Weak scaling plots for each input_type (4 plots)
 
 Analyze these plots and choose a subset to present and explain in your presentation.
+
+### Merge Sort
+#### Average Time/Rank
+##### Input Size 2^16
+![image](https://github.com/user-attachments/assets/09da8606-a398-431b-a8ef-a1d28d4d99f6)
+![image](https://github.com/user-attachments/assets/66ac743d-5a29-49a9-bd80-04fbd6b67a60)
+![image](https://github.com/user-attachments/assets/021a87aa-7189-4bfe-9c02-9ff9b1a80c6a)
+
+##### Input Size 2^18
+![image](https://github.com/user-attachments/assets/68ee5840-d43f-4e84-b194-1e7b114cf5a2)
+![image](https://github.com/user-attachments/assets/96b68001-e3ca-45c9-b884-efa4924add25)
+![image](https://github.com/user-attachments/assets/f8361eef-528e-4268-b983-41c981787616)
+
+##### Input Size 2^20
+![image](https://github.com/user-attachments/assets/e75bd8df-6528-4988-a4fe-70a9d8623498)
+![image](https://github.com/user-attachments/assets/1d94cbac-55ac-44df-b645-046cc2b48c51)
+![image](https://github.com/user-attachments/assets/a82c7f02-e319-4cd2-a0e8-2972d2640f19)
+
+##### Input Size 2^22
+![image](https://github.com/user-attachments/assets/569430c0-0645-4f9e-818f-156daf7806b8)
+![image](https://github.com/user-attachments/assets/3bdd3bb5-9793-439c-9c52-330984119f8a)
+![image](https://github.com/user-attachments/assets/7d5adac4-9319-4f38-b997-0e47d6d1c875)
+
+##### Input Size 2^24
+![image](https://github.com/user-attachments/assets/0337420d-ed04-4bb2-82ea-c91dbb60f123)
+![image](https://github.com/user-attachments/assets/98262b3e-6408-404d-9d69-4e18aa00d9ca)
+![image](https://github.com/user-attachments/assets/d14eb022-f7eb-4276-9e4f-4459f7df996f)
+
+##### Input Size 2^26
+![image](https://github.com/user-attachments/assets/cf404628-39a3-466e-9e04-ddcf09447fbe)
+![image](https://github.com/user-attachments/assets/a18838f7-a8c0-4b2c-8c6d-b6bb69565486)
+![image](https://github.com/user-attachments/assets/4d5be462-dd0e-4411-8576-a6278c8f8caa)
+
+
+#### Strong Scaling Speedup
+![image](https://github.com/user-attachments/assets/1814ee4b-2957-4e3f-9bc0-5db33c0c9416)
+![image](https://github.com/user-attachments/assets/9d944509-52f5-4a97-9e2f-2f7fda06ebe2)
+![image](https://github.com/user-attachments/assets/a34367ae-644d-47a1-ad7e-aa479ed8ba60)
+![image](https://github.com/user-attachments/assets/a7c1736f-0a6f-4689-888c-584d53ef0cab)
+![image](https://github.com/user-attachments/assets/1165fae4-0b76-4e92-843d-c86b4e6dd197)
+![image](https://github.com/user-attachments/assets/742f509a-f076-42aa-91e1-a686eb7b760d)
+![image](https://github.com/user-attachments/assets/82edb30e-a658-4024-a1d4-b43397d06a95)
+![image](https://github.com/user-attachments/assets/df028e97-65b3-4b37-8931-6321d2317c3e)
+![image](https://github.com/user-attachments/assets/5ce07975-979e-4d75-882b-1b9571e19f05)
+![image](https://github.com/user-attachments/assets/fbc025f5-fad3-4f95-ac48-35745cf55f40)
+![image](https://github.com/user-attachments/assets/454b9931-8788-496a-a0eb-9cf9903fbbf1)
+![image](https://github.com/user-attachments/assets/7bec8eee-8602-4c32-9b87-654c63c215a8)
+
+#### Weak Scaling Efficiency
+![image](https://github.com/user-attachments/assets/64e0bc9d-63c1-45d0-b394-93f53342e32b)
+![image](https://github.com/user-attachments/assets/5cd28188-5efb-4909-8d27-362782625a0a)
+![image](https://github.com/user-attachments/assets/995c9bb0-4e6d-4f8b-a45b-ec12722258cb)
+![image](https://github.com/user-attachments/assets/6f5c6114-48d2-405a-a337-cda302615e02)
+![image](https://github.com/user-attachments/assets/069c6b6a-1885-4a46-954b-13745672e59a)
+![image](https://github.com/user-attachments/assets/8d244eb3-ce98-49a4-8cbe-14422525adda)
+![image](https://github.com/user-attachments/assets/bd5bdc5c-e01a-471b-adae-15884a53eece)
+![image](https://github.com/user-attachments/assets/ca317077-d1d9-42a2-b5b7-b288004f4ccc)
+![image](https://github.com/user-attachments/assets/78d93fd2-b25d-415c-8865-76409cfae613)
+![image](https://github.com/user-attachments/assets/7bdf0f6f-27d4-4613-9b74-3f2d0e721255)
+![image](https://github.com/user-attachments/assets/3a2cde32-c8e7-4d99-90f3-307cdf2568a5)
+![image](https://github.com/user-attachments/assets/39b729e8-f6ef-4cb4-aa1e-64a0a01bb900)
+
 
 ## 6. Final Report
 Submit a zip named `TeamX.zip` where `X` is your team number. The zip should contain the following files:
