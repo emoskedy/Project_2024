@@ -620,7 +620,6 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 - In conclusion, the bitonic sort algorithm performs best when the number of processors is matched to the input size. Using too many processors for smaller input sizes causes communication overheads while larger input size benefits more, leading to better computation.
 
 ### Merge Sort
-![image](https://github.com/user-attachments/assets/70807ff6-a8d6-4abf-b2f5-8a2a901de0ea)
 #### Main graphs
 ![image](https://github.com/user-attachments/assets/bef24eb5-5eac-4f86-8977-cb6342ca344f)
 ![image](https://github.com/user-attachments/assets/27cfeaf9-fd8d-4692-a396-b3e4efed5a80)
@@ -628,7 +627,6 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ![image](https://github.com/user-attachments/assets/1ade7fe6-97b0-4d27-a5a6-42d68c3c1a2f)
 ![image](https://github.com/user-attachments/assets/99382481-03f4-42f3-bb77-0f5633e239f7)
 ![image](https://github.com/user-attachments/assets/2dd95d0d-0d30-4b3b-9578-f8b44a3fa21b)
-
 
 #### Comm graphs
 ![image](https://github.com/user-attachments/assets/4cf830e7-9467-4328-8c09-5265155cea79)
@@ -645,6 +643,19 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ![image](https://github.com/user-attachments/assets/cbe8a7b7-3bc2-4c2a-9771-64eadf4870f8)
 ![image](https://github.com/user-attachments/assets/c3627b0f-7397-4aa7-afdf-4ba82412c011)
 ![image](https://github.com/user-attachments/assets/5c8da8b1-ba8d-485c-9735-59d164486177)
+
+#### Analysis
+##### Min, Max, Avg Time
+For both input sizes, adding processors initially improves execution time, however, the benefits diminish due to overhead. With the large input (2^28), parallelism is effective up to about 64 processors, after that the time savings diminish. For the small input (2^16), parallelism quickly becomes counterproductive beyond 32 processors as communication overhead starts to outweigh the parallel benefits. This shows that the effectiveness of parallelism depends heavily on matching processor count to workload size.
+
+##### Variance Time/Rank
+The variance in time per rank is generally low at lower processor counts for both input sizes indicating effective load balancing. However, at 256 processors, both input sizes show a spike likely due to communication overhead. For the large input, variance drops at 512 processors which suggests better load distribution. The smaller input continues to suffer from inefficiencies.
+
+##### Total Time
+The total time increases nearly exponentially as processor count rises, especially for the smaller input. While the large input can utilize more processors effectively, excessive parallelism for the small input leads to significant overhead, making high processor counts impractical for small workloads.
+
+##### Conclusion
+Parallelism is achieved when processor count matches input size. Large inputs benefit from higher parallelization while smaller inputs are hindered by too many processors. This emphasizes the need to balance processor count with workload size to avoid diminishing returns in parallel computing.
 
 ### Radix Sort
 #### Main graphs
