@@ -566,7 +566,27 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 ### Performance Analysis
 ### Bitonic Sort
 ### Merge Sort
-![image](https://github.com/user-attachments/assets/70807ff6-a8d6-4abf-b2f5-8a2a901de0ea)
+#### Input Size 2^16
+##### Average Time/Rank
+![image](https://github.com/user-attachments/assets/09da8606-a398-431b-a8ef-a1d28d4d99f6)
+![image](https://github.com/user-attachments/assets/66ac743d-5a29-49a9-bd80-04fbd6b67a60)
+![image](https://github.com/user-attachments/assets/021a87aa-7189-4bfe-9c02-9ff9b1a80c6a)
+
+
+#### Input Size 2^18
+#### Input Size 2^20
+#### Input Size 2^22
+#### Input Size 2^24
+#### Input Size 2^26
+
+
+![image](https://github.com/user-attachments/assets/250c6c8c-0ed4-46f6-b220-04724afc6bf3)
+![image](https://github.com/user-attachments/assets/2648ffd9-6234-4df4-b602-70503ca6bb71)
+
+![image](https://github.com/user-attachments/assets/6e5f21fb-9d58-4be5-a5b7-ff738b640d29)
+
+![image](https://github.com/user-attachments/assets/06be55a7-ff08-431f-b3e2-61ba7c698a7d)
+![image](https://github.com/user-attachments/assets/dec83c8e-2a7b-423d-9b11-5463e7ab0a8f)
 
 ### Radix Sort
 ### Sample Sort
