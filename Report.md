@@ -618,6 +618,30 @@ perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).
 
 ### Merge Sort
 ![image](https://github.com/user-attachments/assets/70807ff6-a8d6-4abf-b2f5-8a2a901de0ea)
+#### Main graphs
+![image](https://github.com/user-attachments/assets/bef24eb5-5eac-4f86-8977-cb6342ca344f)
+![image](https://github.com/user-attachments/assets/27cfeaf9-fd8d-4692-a396-b3e4efed5a80)
+![image](https://github.com/user-attachments/assets/2d394551-775e-4c97-8620-ff4c23c93bcd)
+![image](https://github.com/user-attachments/assets/1ade7fe6-97b0-4d27-a5a6-42d68c3c1a2f)
+![image](https://github.com/user-attachments/assets/99382481-03f4-42f3-bb77-0f5633e239f7)
+![image](https://github.com/user-attachments/assets/2dd95d0d-0d30-4b3b-9578-f8b44a3fa21b)
+
+
+#### Comm graphs
+![image](https://github.com/user-attachments/assets/4cf830e7-9467-4328-8c09-5265155cea79)
+![image](https://github.com/user-attachments/assets/6a277116-f85d-4e74-8f1a-3a7e3ed1d201)
+![image](https://github.com/user-attachments/assets/e4918adc-721b-478b-a128-85e0fcf27693)
+![image](https://github.com/user-attachments/assets/e04c1ae4-e3c9-4c28-906a-5448413ea111)
+![image](https://github.com/user-attachments/assets/36463cae-8a4f-4a1c-8d12-ec07516a8ba8)
+![image](https://github.com/user-attachments/assets/373c8385-d16e-4216-9d8b-bfc79646926e)
+
+#### Comp Large graphs
+![image](https://github.com/user-attachments/assets/eb68699d-9007-4a24-b9b0-b2cbf24f8c2e)
+![image](https://github.com/user-attachments/assets/b1d6cf86-b73c-4f13-9f4b-50ccc985ccdc)
+![image](https://github.com/user-attachments/assets/3d3552a7-0f0e-4c78-9620-4fae00698c0d)
+![image](https://github.com/user-attachments/assets/cbe8a7b7-3bc2-4c2a-9771-64eadf4870f8)
+![image](https://github.com/user-attachments/assets/c3627b0f-7397-4aa7-afdf-4ba82412c011)
+![image](https://github.com/user-attachments/assets/5c8da8b1-ba8d-485c-9735-59d164486177)
 
 ### Radix Sort
 ### Sample Sort
